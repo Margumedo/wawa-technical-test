@@ -1,6 +1,22 @@
-# Aplica de Rutas
+# Aplicación de Rutas 🚌
 
-Este repositorio contiene una aplicación de rutas construida con **Next.js** para el frontend y **NestJS** para el backend. La aplicación permite a los usuarios crear rutas mediante un formulario, editarlas, eliminar y actualizarlas.
+¡Bienvenido a la aplicación de gestión de rutas de autobuses! Este proyecto te permite crear, editar, eliminar y visualizar información detallada sobre rutas de autobuses, incluyendo su origen, destino, precio, horarios y capacidad.
+
+## Características 🚀
+Frontend (Next.js):
+
+Interfaz de usuario moderna e intuitiva.
+Listado de rutas de autobuses con información esencial.
+Página de detalles de ruta con información completa y mapa interactivo (gracias a la API de Google Maps).
+Formulario para crear y editar rutas, con validación de datos y manejo de errores para una experiencia fluida.
+
+Backend (Nest.js):
+
+API RESTful robusta para gestionar las rutas de autobuses.
+Endpoints CRUD completos para crear, leer, actualizar y eliminar rutas.
+Validación de datos en el backend para garantizar la integridad de la información.
+Integración con una base de datos (SQLite en este caso) a través de Prisma ORM para un manejo eficiente de los datos.
+Documentación clara y completa de la API utilizando Swagger, facilitando su uso y comprensión.
 
 ## Tabla de Contenidos
 
@@ -12,7 +28,7 @@ Este repositorio contiene una aplicación de rutas construida con **Next.js** pa
 - [Contribuir](#contribuir)
 - [Licencia](#licencia)
 
-## Requisitos Previos
+## Requisitos Previos 🛠️
 
 Antes de comenzar, asegúrate de tener instaladas las siguientes herramientas:
 
@@ -36,25 +52,25 @@ Sigue estos pasos para clonar el repositorio y configurar el proyecto en tu máq
 
     Navega a las carpetas `frontend` y `backend` para instalar las dependencias necesarias:
 
-## Frontend (Next.js):
+3. **Frontend (Next.js):**
 
-```bash
-cd frontend
-npm install
-# o si usas yarn
-yarn install
-```
+    ```bash
+    cd frontend
+    npm install
+    # o si usas yarn
+    yarn install
+    ```
 
-## Backend (Nest.js):
+4. **Backend (Nest.js):**
 
-```bash
-cd ../backend
-npm install
-# o si usas yarn
-yarn install
-```
+    ```bash
+    cd ../backend
+    npm install
+    # o si usas yarn
+    yarn install
+    ```
 
-## Configuración
+## Configuración 🔧
 
 Antes de ejecutar la aplicación, debes configurar las variables de entorno necesarias tanto para el frontend como para el backend.
 
@@ -83,6 +99,15 @@ Una vez que hayas configurado las variables de entorno, puedes ejecutar el proye
     ```bash
     cd frontend
     npm run dev
+    # o si usas yarn
+    yarn dev
+    ```
+
+2. Ejecutar el Backend (NestJS):
+
+    ```bash
+    cd backend
+    npm run start:dev
     # o si usas yarn
     yarn dev
     ```
