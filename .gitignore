@@ -56,7 +56,7 @@ backend/*.pid.lock
 # Diagnostic reports (https://nodejs.org/api/report.html)
 backend/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-######F####
+######Frontend####
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
