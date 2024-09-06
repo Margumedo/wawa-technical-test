@@ -66,6 +66,7 @@ Sigue estos pasos para clonar el repositorio y configurar el proyecto en tu máq
     ```bash
     cd ../backend
     npm install
+    npx prisma generate
     # o si usas yarn
     yarn install
     ```
