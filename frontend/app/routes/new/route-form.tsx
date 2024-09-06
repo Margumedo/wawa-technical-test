@@ -10,7 +10,7 @@ import { createRoute, updateRoute } from "../routes.api"
 import { useParams, useRouter } from "next/navigation"
 import DatePicker, { registerLocale } from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { es } from "date-fns/locale"
 import axios from "axios"
 import { toast } from "@/hooks/use-toast"
@@ -34,9 +34,52 @@ export function RouteForm({ route }: any) {
     const [horaSalida, setHoraSalida] = useState<Date | null>(route?.horaSalida ? new Date(route.horaSalida) : null);
     const [horaLlegada, setHoraLlegada] = useState<Date | null>(route?.horaLlegada ? new Date(route.horaLlegada) : null);
 
+    const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
+    const [destination, setDestination] = useState<{ lat: number; lng: number } | null>(null);
+
     const router = useRouter();
     const params = useParams<{ id: string }>();
 
+    // Refs para los inputs de Google Places Autocomplete
+    const originRef = useRef<HTMLInputElement | null>(null);
+    const destinationRef = useRef<HTMLInputElement | null>(null);
+
+    // Configuración del Autocompletado de Google Places
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.google) {
+            if (originRef.current) {
+                const originAutocomplete = new window.google.maps.places.Autocomplete(originRef.current);
+                originAutocomplete.addListener('place_changed', () => {
+                    const place = originAutocomplete.getPlace();
+                    if (place.geometry && place.geometry.location) {
+                        setOrigin({
+                            lat: place.geometry.location.lat(),
+                            lng: place.geometry.location.lng(),
+                        });
+                        setValue('origen', place.formatted_address); // Actualizar el valor en React Hook Form
+                    } else {
+                        console.error('No se encontró la ubicación del lugar de origen.');
+                    }
+                });
+            }
+
+            if (destinationRef.current) {
+                const destinationAutocomplete = new window.google.maps.places.Autocomplete(destinationRef.current);
+                destinationAutocomplete.addListener('place_changed', () => {
+                    const place = destinationAutocomplete.getPlace();
+                    if (place.geometry && place.geometry.location) {
+                        setDestination({
+                            lat: place.geometry.location.lat(),
+                            lng: place.geometry.location.lng(),
+                        });
+                        setValue('destino', place.formatted_address); // Actualizar el valor en React Hook Form
+                    } else {
+                        console.error('No se encontró la ubicación del lugar de destino.');
+                    }
+                });
+            }
+        }
+    }, [setValue]);
 
     const onSubmit = handleSubmit(async (data) => {
         const formData = {
@@ -45,22 +88,26 @@ export function RouteForm({ route }: any) {
             horaLlegada: horaLlegada ? horaLlegada.toISOString().replace(/\.\d{3}Z$/, 'Z') : null,
             precio: parseFloat(data.precio),
             capacidadAutobus: parseInt(data.capacidadAutobus),
+            origenLatitud: origin?.lat ?? 0,
+            origenLongitud: origin?.lng ?? 0,
+            destinoLatitud: destination?.lat ?? 0,
+            destinoLongitud: destination?.lng ?? 0,
         };
 
         try {
             if (params.id) {
                 await updateRoute(params.id, { ...formData, url: 'test' });
                 toast({
-                    title: 'Actualizada con exito',
-                    description: `Ruta ${data.origen} - ${data.destino}`,
+                    title: 'Actualizada con éxito',
+                    description: `Ruta: ${data.origen.split(',')[0].trim()} - ${data.destino.split(',')[0].trim()}`,
                     variant: 'default',
                     className: 'border-purple-500 mt-4'
                 });
             } else {
                 await createRoute({ ...formData, url: 'test' });
                 toast({
-                    title: 'Creada con exito',
-                    description: `Ruta ${data.origen} - ${data.destino} `,
+                    title: 'Creada con éxito',
+                    description: `Ruta: ${data.origen.split(',')[0].trim()} - ${data.destino.split(',')[0].trim()}`,
                     variant: 'default',
                     className: 'border-purple-500 mt-4'
                 });
@@ -69,18 +116,15 @@ export function RouteForm({ route }: any) {
             router.refresh();
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
-                const errorMessage = error.response.data.message || 'Error desconocido en el servidor'; // Obtener el mensaje de error del backend o mostrar un mensaje genérico
-
+                const errorMessage = error.response.data.message || 'Error desconocido en el servidor';
                 errorMessage.map((error: any) => {
-
                     toast({
                         title: 'Error',
                         description: error,
                         variant: 'destructive',
                         className: 'mt-4'
                     });
-                }
-                )
+                });
             } else {
                 console.error('Error al enviar el formulario:', error);
                 toast({
@@ -90,10 +134,7 @@ export function RouteForm({ route }: any) {
                 });
             }
         }
-
     });
-
-
 
     return (
         <form onSubmit={onSubmit} className="bg-purple-50 p-6 rounded-lg shadow-lg">
@@ -104,6 +145,7 @@ export function RouteForm({ route }: any) {
                         id="origen"
                         placeholder="Ubicación de origen"
                         {...register('origen', { required: true })}
+                        ref={originRef} // Añadir la ref para el autocompletado
                         className=" text-black  border-purple-600 focus:ring-yellow-500 focus:border-yellow-500 "
                     />
                     {errors.origen && <span className="text-red-600 font-sans text-sm" >El origen es requerido</span>}
@@ -114,6 +156,7 @@ export function RouteForm({ route }: any) {
                         id="destino"
                         placeholder="Lugar de destino"
                         {...register('destino', { required: true })}
+                        ref={destinationRef} // Añadir la ref para el autocompletado
                         className="  text-black border-purple-600 focus:ring-yellow-500 focus:border-yellow-500"
                     />
                     {errors.destino && <span className="text-red-600 font-sans text-sm" >El destino es requerido</span>}
@@ -207,6 +250,7 @@ export function RouteForm({ route }: any) {
                         {params.id ? "Actualizar" : "Crear"}
                     </Button>
                 </div>
+
             </div>
         </form>
     );

@@ -14,6 +14,10 @@ model Route {
   id               Int      @id @default(autoincrement())
   origen           String
   destino          String
+  origenLatitud    Float?
+  origenLongitud   Float?
+  destinoLatitud   Float?
+  destinoLongitud  Float?
   precio           Float
   horaSalida       DateTime
   horaLlegada      DateTime

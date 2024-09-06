@@ -27,9 +27,11 @@ export default function RootLayout({
   return (
 
     <html lang="en">
-      <script async
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwFZkae8VKjqmAXrTJzSIupJc7fbfV7g0&callback=console.debug&libraries=maps,marker&v=beta">
-      </script>
+      <script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        async
+        defer
+      ></script>
 
       <link rel="icon" href="/app/wawa.png" sizes="any" />
 

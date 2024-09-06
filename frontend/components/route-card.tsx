@@ -26,7 +26,7 @@ export function RouteCard({ route }: any) {
     return (
         <Card >
             <CardHeader>
-                <CardTitle>{`${route.origen} - ${route.destino}`}</CardTitle>
+                <CardTitle>{`${route.origen.split(',')[0].trim()} - ${route.destino.split(',')[0].trim()}`}</CardTitle>
                 <CardDescription>Precio: ${`${route.precio}`}</CardDescription>
             </CardHeader>
             <CardContent>
